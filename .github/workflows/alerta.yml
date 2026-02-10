@@ -1,1 +1,25 @@
+name: Alerta Push a Main
 
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  notificacion:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Obtener código del repositorio
+        uses: actions/checkout@v4
+
+      - name: Enviar notificación a ntfy
+        run: |
+          curl -X POST https://ntfy.sh/devops-itla \
+          -H "Title: Nuevos cambios en main 🚨" \
+          -H "Priority: 4" \
+          -H "Tags: github,ci-cd,alerta" \
+          -d "Repositorio: ${{ github.repository }}
+          Usuario: ${{ github.actor }}
+          Commit: ${{ github.event.head_commit.message }}
+          Hora: $(date)"
